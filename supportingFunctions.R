@@ -14,12 +14,13 @@ csv_converter <- function(dir){
 
 csv_converter("countryY")
 
-#STEP (2) compile all csv files from country Y into one csv vile
+##2a: Create function to organize all csv file data in country Y
 csvcompiling <- function(dir) {
   # define fileset
   files<-list.files(path=dir, full.names=TRUE)
   # read in first file
-  alldata <- read.csv("~/Desktop/R Studio Projects/Rproject2021/countryY/screen_120.csv", header=TRUE, stringsAsFactors = FALSE)
+  alldata <- read.csv("~/Desktop/R Studio Projects/Rproject2021/countryY/screen_120.csv",
+                      header=TRUE, stringsAsFactors = FALSE)
   alldata$country <- numeric(length=nrow(alldata))
   for (i in 1:length(alldata$country)){
     alldata$country[i] = "Y"
@@ -31,7 +32,9 @@ csvcompiling <- function(dir) {
   year = 121
   for(i in 2:length(files)){
     # open every file and add columns for country and DOY
-    csvdata <- read.table(file=files[i], sep=',', header=TRUE, stringsAsFactors=FALSE)
+    
+    csvdata <- read.table(file=files[i], sep=',', header=TRUE,
+                          stringsAsFactors=FALSE)
     csvdata$country <- numeric(length=nrow(csvdata))
     for (i in 1:length(csvdata$country)){
       csvdata$country[i] = "Y"
@@ -44,6 +47,25 @@ csvcompiling <- function(dir) {
     alldata <-rbind(alldata,csvdata)
     year = year + 1 
   }
+# Manage NA conditionals 
+  if(anyNA(alldata) == TRUE){
+    print("NA present.")
+    yourresponse<-readline(prompt="Please select from following:
+                1) Delete NA rows
+                2) Include NA rows with warning
+                3) Include NA rows, excluding warning")
+    if(yourresponse == "1"){
+      final_countries<-na.omit(alldata)
+    }else if(useranswer == "2"){
+      print("Warning: NA present!")
+      return(yourresponse)
+    }else if(yourresponse == "3"){
+      return(final_countries)
+    }else{
+      print("Invalid selection. Please select a choice from 1-3.")
+    }
+    return(alldata)
+  }
   return(alldata)
 }
 
@@ -51,10 +73,13 @@ dfy <- csvcompiling("~/Desktop/R Studio Projects/Rproject2021/countryY/")
 
 ##2b: Repeat previous function with country X
 csvcompiling <- function(dir) {
+  
   # define fileset
   files<-list.files(path=dir, full.names=TRUE)
+  
   # read in first file
-  alldata <- read.csv("~/Desktop/R Studio Projects/Rproject2021/countryX/screen_120.csv",header=TRUE, stringsAsFactors = FALSE)
+  alldata <- read.csv("~/Desktop/R Studio Projects/Rproject2021/countryX/screen_120.csv",
+                      header=TRUE, stringsAsFactors = FALSE)
   alldata$country <- numeric(length=nrow(alldata))
   for (i in 1:length(alldata$country)){
     alldata$country[i] = "X"
@@ -63,9 +88,11 @@ csvcompiling <- function(dir) {
   for (i in 1:length(alldata$DOY)){
     alldata$DOY[i] = 120
   }
+  
   year = 121
   for(i in 2:length(files)){
     # open every file and add columns for country and DOY
+    
     csvdata <- read.table(file=files[i], sep=',', header=TRUE,
                           stringsAsFactors=FALSE)
     csvdata$country <- numeric(length=nrow(csvdata))
@@ -80,15 +107,38 @@ csvcompiling <- function(dir) {
     alldata <-rbind(alldata,csvdata)
     year = year + 1 
   }
+  # Manage NA conditionals 
+  if(anyNA(alldata) == TRUE){
+    print("NA present.")
+    yourresponse<-readline(prompt="Please select from following:
+                1) Delete NA rows
+                2) Include NA rows with warning
+                3) Include NA rows, excluding warning")
+    if(yourresponse == "1"){
+      final_countries<-na.omit(alldata)
+    }else if(useranswer == "2"){
+      print("Warning: NA present!")
+      return(yourresponse)
+    }else if(yourresponse == "3"){
+      return(final_countries)
+    }else{
+      print("Invalid selection. Please select a choice from 1-3.")
+    }
+    return(alldata)
+  }
   return(alldata)
 }
-
 dfx <- csvcompiling("~/Desktop/R Studio Projects/Rproject2021/countryX/")
 
 ##2c: Bring data from both countries into one single csv file 
-setwd("~/Desktop/R Studio Projects/Rproject2021")
-write.csv(rbind(dfx, dfy),"finalcombineddata.csv")
-read.csv("finalcombineddata.csv")
+singledir<-setwd("~/Desktop/R Studio Projects/Rproject2021")
+mergecsv<-function(directory){
+  write.csv(rbind(dfx, dfy),"finalcombineddata.csv")
+  finalmerging<-read.csv("finalcombineddata.csv")
+  return(finalmerging)
+}
+
+mergecsv(singledir)
 
 
 ##Step (3) - Write a function to summarize the compiled data set in terms of number of screens run, 
