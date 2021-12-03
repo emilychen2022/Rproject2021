@@ -1,6 +1,6 @@
 setwd("C:Desktop/R Studio Projects/Rproject2021")
 
-#STEP (1) convert .txt to .csv
+###STEP (1) - convert .txt to .csv
 dir<-setwd("~/Desktop/R Studio Projects/Rproject2021/")
 csv_converter <- function(dir){
   setwd(dir)
@@ -14,7 +14,8 @@ csv_converter <- function(dir){
 
 csv_converter("countryY")
 
-##2a: Create function to organize all csv file data in country Y
+###STEP (2) - compile csv
+## 2a: Create function to organize all csv file data in country Y
 csvcompiling <- function(dir) {
   # define fileset
   files<-list.files(path=dir, full.names=TRUE)
@@ -141,7 +142,7 @@ mergecsv<-function(directory){
 mergecsv(singledir)
 
 
-##Step (3) - Write a function to summarize the compiled data set in terms of number of screens run, 
+###Step (3) - Write a function to summarize the compiled data set in terms of number of screens run, 
 #percent of patients screened that were infected, male vs. female patients, and the age distribution of patients
 
 #establish function and load data from combined file
