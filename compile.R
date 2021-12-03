@@ -1,11 +1,9 @@
-
 ###STEP (2) - compile csv
 
 ##2a: Create function to organize all csv file data in country Y
-# dir variable is previously defined
+country = "Y"
+dir <- setwd("~/Desktop/R Studio Projects/Rproject2021/")
 csvcompiling <- function(dir,country) {
-  country = "Y"
-  dir <- setwd("~/Desktop/R Studio Projects/Rproject2021/")
   # paste asks you what to put together and what to separate by 
   files<-list.files(path=paste(dir,"/country",country, sep=""), full.names=TRUE)
   
@@ -60,13 +58,14 @@ csvcompiling <- function(dir,country) {
 }
 # call the function
 dfy <- csvcompiling(dir,country)
-
+write.csv(dfy,"~/Desktop/R Studio Projects/Rproject2021/dfy.csv",row.names=TRUE)
 
 ##2b: Repeat previous function with country X
-# dir variable is previously defined 
+dir <- setwd("~/Desktop/R Studio Projects/Rproject2021/")
 country = "X"
 # call the function
 dfx <- csvcompiling(dir,country)
+write.csv(dfx,"~/Desktop/R Studio Projects/Rproject2021/dfx.csv",row.names=TRUE)
 
 ##2c: Bring data from both countries into one single csv file 
 mergecsv<-function(dir){
@@ -75,4 +74,4 @@ mergecsv<-function(dir){
   return(finalmerging)
 }
 # Call the function 
-mergecsv(dir)
+finalcombineddata<-mergecsv(dir)

@@ -1,6 +1,6 @@
 ###Step (3) - Write a function to summarize the compiled data set in terms of number of screens run, 
 #percent of patients screened that were infected, male vs. female patients, and the age distribution of patients
-
+setwd("~/Desktop/R Studio Projects/Rproject2021/")
 #establish function and load data from combined file
 library(ggplot2)
 library(cowplot)
@@ -110,12 +110,13 @@ summary <- function(file){
     ylim(c(0,7000))+
     xlab("Bacteria Marker") + 
     ylab("Total Number")
+
   
   # print results
   #fig<-plot_grid(x_marker_graph, y_marker_graph, labels = c('A', 'B'))
   # print(fig)
   
   fig<-plot_grid(plot_1, plot_4, plot_5, plot_6, labels = c('A', 'B', 'C', 'D'))
-  return(fig)
+  print(fig)
 }
 summary("allData.csv")
