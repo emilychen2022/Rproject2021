@@ -2,52 +2,31 @@
 # Question 2: If Country Y develops a vaccine for the disease, is it likely to work for citizens of Country X?
 
 
+#Assumptions:
+# path= "~/Desktop/R Studio Projects/Rproject2021/"
+#objects in Rproject2021:
+  #countryX folder
+  #countryY folder
+  #allData.csv
+  #supportingFunctions.R
+  #analysis.R
+#Go to working directory
+setwd(dirname(getwd()))
+#Use source() to load functions in supportingFunctions.R
+source("supportingFunctions.R")
+##Run All Functions
+#convert .txt files into .csv
+csv_converter("countryY")
+#compile all .csv files
+source("compile.R")
 
-##Plot 2 : Percent Infected 
-#compile data
-slices <- c(percent_infected, percent_not_infected)
-lbls <- c("Infected", "Not Infected")
-pct <- round(slices)
-lbls <- paste(lbls, pct) # add percents to labels
-lbls <- paste(lbls,"%",sep="") # ads % to labels
-pie(slices,labels = lbls, col=rainbow(length(lbls)), main="Infected v. Not Infected")
-fig_2<-plot_grid(plot_2)
-return(fig_2)
+source("summary.R")
+#summarize data
+summary("allData.csv")
 
+#From plots 'C' and 'D' found in the summary, we see ...
+  # Country X: greater number of bacteria markers, concentrated in 1-5
+  # Country Y: smaller number of markers present, but more distribution 
+# More distribution means that the 
 
-###STEP (4) - Determine Marker Count
-library(ggplot2)
-library(cowplot)
-
-countryX_data <- data[data$country == "X", ]
-
-# Country Y data
-countryY_data <- data[data$country == "Y", ]
-
-# Count each marker per country
-markers <- data.frame(marker = seq(1,10), 
-                      totalX = colSums(countryX_data[, 3:12] != 0),
-                      totalY = colSums(countryY_data[, 3:12] != 0))
-markers$marker <- as.factor(markers$marker)
-
-# Plots Country X's marker data
-x_marker_graph <- ggplot(markers, aes(x = marker, y = totalX, fill = marker)) + 
-  geom_bar(stat = "identity") +
-  ggtitle("Country X Marker Count") +
-  theme(legend.position = "none")+
-  geom_col(color = "black")+
-  xlab("Marker") + 
-  ylab("Total")
-
-# Plots Country Y's marker data
-y_marker_graph <- ggplot(markers, aes(x = marker, y = totalY, fill = marker)) + 
-  geom_bar(stat = "identity") +
-  ggtitle("Country Y Marker Count") +
-  theme(legend.position = "none")+
-  geom_col(color = "black")+
-  xlab("Marker") + 
-  ylab("Total")
-
-# print results
-fig<-plot_grid(x_marker_graph, y_marker_graph, labels = c('A', 'B'))
-print(fig)
+#This means the disease (bacteria) likely underwent mutations between Country X and Country Y. 

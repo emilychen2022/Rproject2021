@@ -1,95 +1,3 @@
-
-###STEP (1) - convert .txt to .csv
-csv_converter <- function(dir){
-  setwd(dir)
-  data <- list.files(pattern = ".txt")
-  for (i in 1:length(data)){
-    DATA=read.table(file=data[i],header=T)
-    write.table(DATA,file=sub(".txt",".csv",data[i]),row.names=F,quote=F,sep=",")
-  }
-  file.remove(data)
-}
-
-csv_converter("countryY")
-
-###STEP (2) - compile csv
-
-##2a: Create function to organize all csv file data in country Y
-# dir variable is previously defined
-csvcompiling <- function(dir,country) {
-  country = "Y"
-  dir <- setwd("~/Desktop/R Studio Projects/Rproject2021/")
-  # paste asks you what to put together and what to separate by 
-  files<-list.files(path=paste(dir,"/country",country, sep=""), full.names=TRUE)
-  
-  # read in first file
-  alldata <- read.csv(files[1], header=TRUE, stringsAsFactors = FALSE)
-  alldata$country <- numeric(length=nrow(alldata))
-  for (i in 1:length(alldata$country)){
-    alldata$country[i] = country
-  }
-  alldata$DOY <- numeric(length=nrow(alldata))
-  for (i in 1:length(alldata$DOY)){
-    alldata$DOY[i] = 120
-  }
-  year = 121
-  for(i in 2:length(files)){
-    
-    # open every file and add columns for country and DOY
-    csvdata <- read.table(file=files[i], sep=',', header=TRUE,
-                          stringsAsFactors=FALSE)
-    csvdata$country <- numeric(length=nrow(csvdata))
-    for (i in 1:length(csvdata$country)){
-      csvdata$country[i] = country
-    }
-    csvdata$DOY <- numeric(length=nrow(csvdata))
-    for (i in 1:length(csvdata$DOY)){
-      csvdata$DOY[i] = year
-    }
-    # combine all files and fill out year column
-    alldata <-rbind(alldata,csvdata)
-    year = year + 1 
-  }
-  # manage NA conditionals 
-  if(anyNA(alldata) == TRUE){
-    print("NA present.")
-    yourresponse<-readline(prompt="Please select from following:
-                1) Delete NA rows
-                2) Include NA rows with warning
-                3) Include NA rows, excluding warning")
-    if(yourresponse == "1"){
-      final_countries<-na.omit(alldata)
-    }else if(useranswer == "2"){
-      print("Warning: NA present!")
-      return(yourresponse)
-    }else if(yourresponse == "3"){
-      return(final_countries)
-    }else{
-      print("Invalid selection. Please select a choice from 1-3.")
-    }
-    return(alldata)
-  }
-  return(alldata)
-}
-# call the function
-dfy <- csvcompiling(dir,country)
-
-
-##2b: Repeat previous function with country X
-# dir variable is previously defined 
-country = "X"
-# call the function
-dfx <- csvcompiling(dir,country)
-
-##2c: Bring data from both countries into one single csv file 
-mergecsv<-function(dir){
-  write.csv(rbind(dfx, dfy),"finalcombineddata.csv")
-  finalmerging<-read.csv("finalcombineddata.csv")
-  return(finalmerging)
-}
-# Call the function 
-mergecsv(dir)
-
 ###Step (3) - Write a function to summarize the compiled data set in terms of number of screens run, 
 #percent of patients screened that were infected, male vs. female patients, and the age distribution of patients
 
@@ -99,9 +7,9 @@ library(cowplot)
 
 summary <- function(file){
   data <- read.csv("allData.csv", header=TRUE, sep= ",", stringsAsFactors=FALSE)
-
-##Number of Screens
-#Number of Screens Total = number of rows (i.e. number of people tested)
+  
+  ##Number of Screens
+  #Number of Screens Total = number of rows (i.e. number of people tested)
   total_screens <- nrow(data)
   cat("The number of total screens run: ", total_screens, "\n")
   #Number of screens for each country
@@ -116,8 +24,8 @@ summary <- function(file){
   Screens <- c(total_screens, countryX_screens, countryY_screens)
   Screens_df <- data.frame(Location, Screens)
   
-##Percentage of Infected Patients
-#Look at each row individually. If infected, individual will have one or more marker as a 1.
+  ##Percentage of Infected Patients
+  #Look at each row individually. If infected, individual will have one or more marker as a 1.
   #Percent of patients screened that were infected and not infected
   infected <- nrow(data[data$marker01 == 1 | data$marker02==1 | data$marker03==1 |
                           data$marker04==1 | data$marker05==1 | data$marker06==1 |
@@ -130,7 +38,7 @@ summary <- function(file){
   percent_not_infected <- round(percent_not_infected, digits=2)
   cat("The percent not infected: ", percent_not_infected, "%\n")
   
-##Male v. Female Patients
+  ##Male v. Female Patients
   total_patients <- nrow(data)
   male <- nrow(data[data$gender == "male",])
   percent_male <- (male/total_patients)*100
@@ -141,35 +49,35 @@ summary <- function(file){
   percent_female <- round(percent_female, digits=2)
   cat("Percentage of female patients: ", percent_female, "%\n")
   
-##Age Distribution
+  ##Age Distribution
   age_data <- data
   age_data$group <- cut(age_data$age, breaks = c(0,10,20,30,40,50,60,70,80,400),
-                             labels = c("0+","10+","20+","30+","40+","50+","60+","70+","80+"),
-                             right=T)
-##Determine Marker Count
-    countryX_data <- data[data$country == "X", ]
-    countryY_data <- data[data$country == "Y", ]
-    # Count each marker per country
-    markers <- data.frame(marker = seq(1,10), 
-                          totalX = colSums(countryX_data[, 3:12] != 0),
-                          totalY = colSums(countryY_data[, 3:12] != 0))
-    markers$marker <- as.factor(markers$marker)
-    
-##Plot 1 : Number of Screens
+                        labels = c("0+","10+","20+","30+","40+","50+","60+","70+","80+"),
+                        right=T)
+  ##Determine Marker Count
+  countryX_data <- data[data$country == "X", ]
+  countryY_data <- data[data$country == "Y", ]
+  # Count each marker per country
+  markers <- data.frame(marker = seq(1,10), 
+                        totalX = colSums(countryX_data[, 3:12] != 0),
+                        totalY = colSums(countryY_data[, 3:12] != 0))
+  markers$marker <- as.factor(markers$marker)
+  
+  ##Plot 1 : Number of Screens
   plot_1 <- ggplot(data = Screens_df, aes(x=Location, y=Screens))+
     geom_col(aes(fill=Location))+
     ggtitle("Number of Screens Run per Country")+
     theme(legend.position = "none")
-
-##Plot 2: Infected
+  
+  ##Plot 2: Infected
   slices <- c(percent_infected, percent_not_infected)
   lbls <- c("Infected", "Not Infected")
   pct <- round(slices)
   lbls <- paste(lbls, pct) # add percents to labels
   lbls <- paste(lbls,"%",sep="") # ads % to labels
   pie(slices,labels = lbls, col=rainbow(length(lbls)), main="Infected v. Not Infected")
-
-##Plot 3: Gender
+  
+  ##Plot 3: Gender
   slices <- c(percent_male, percent_female)
   lbls <- c("Male", "Female")
   pct <- round(slices)
@@ -177,14 +85,14 @@ summary <- function(file){
   lbls <- paste(lbls,"%",sep="") # ads % to labels
   pie(slices,labels = lbls, col=rainbow(length(lbls)), main="Male v. Female Patients")
   
-##Plot 4: Age Distribution
+  ##Plot 4: Age Distribution
   plot_4 <- ggplot(age_data, aes(x=group, fill = gender)) +
     geom_bar(position = "dodge") +
     ggtitle("Age Distribution") +
     xlab("Age Group") +
     ylab("Number of People")
   
-##Plot 5: Country X Marker
+  ##Plot 5: Country X Marker
   plot_5 <- ggplot(markers, aes(x = marker, y = totalX, fill = marker)) + 
     geom_bar(stat = "identity") +
     ggtitle("Country X Marker Count") +
@@ -193,7 +101,7 @@ summary <- function(file){
     xlab("Bacteria Marker") + 
     ylab("Total Number")
   
-##Plot 6: Country Y Marker
+  ##Plot 6: Country Y Marker
   plot_6 <- ggplot(markers, aes(x = marker, y = totalY, fill = marker)) + 
     geom_bar(stat = "identity") +
     ggtitle("Country Y Marker Count") +
@@ -205,9 +113,9 @@ summary <- function(file){
   
   # print results
   #fig<-plot_grid(x_marker_graph, y_marker_graph, labels = c('A', 'B'))
- # print(fig)
+  # print(fig)
   
-fig<-plot_grid(plot_1, plot_4, plot_5, plot_6, labels = c('A', 'B', 'C', 'D'))
-return(fig)
+  fig<-plot_grid(plot_1, plot_4, plot_5, plot_6, labels = c('A', 'B', 'C', 'D'))
+  return(fig)
 }
 summary("allData.csv")
