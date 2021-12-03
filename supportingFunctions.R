@@ -103,56 +103,7 @@ summary <- function(file){
   data <- read.csv("allData.csv", header=TRUE, sep= ",", stringsAsFactors=FALSE)
 #Number of Screens Total = number of rows (i.e. number of people tested)
   total_screens <- nrow(data)
-#Number of screens for each country
-  Xfiles <- subset(data, country == "X")
-  countryX_screens <- nrow(Xfiles)
-  Yfiles <- subset(data, country == "Y")
-  countryY_screens <- nrow(Yfiles)
-# compile data for screens for Total, Country X, and Country Y
-  Location <- c("Total Screens", "Country X", "Country Y")
-  Screens <- c(total_screens, countryX_screens, countryY_screens)
-  Screens_df <- data.frame(Location, Screens)
-  # Plot Data
-  plota <- ggplot(data = Screens_df, aes(x=Location, y=Screens))+
-    geom_col(aes(fill=Location))+
-    ggtitle("Number of Screens Run per Country")+
-    theme(legend.position = "none")
-fig<-plot_grid(plota)
 }
 summary(allData.csv)
 
 
-summary <- function(file){     #"file" is the file name
-  #Load data 
-  data <- read.table("allData.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
-  #Number of screens run
-  total_screens <- nrow(data)
-  cat("The number of total screens run: ", total_screens, "\n")
-  #Percent of patients screened that were infected
-  nInfected <- 0
-  for(n in 1:nrow(data)){
-    if(is.element(1, data[n,3:12]) == TRUE){
-      nInfected <- nInfected + 1
-    }
-  }
-  percentInfected <- nInfected / nscreens * 100
-  #Male vs. female patients
-  nMale <- 0
-  nFemale <- 0
-  for(n in 1:nrow(data)){
-    if(is.element(1, data[n,3:12]) == TRUE){
-      if(data[n,1] == "male"){
-        nMale <- nMale + 1
-      }else{
-        nFemale <- nFemale + 1
-      }
-    }
-  }
-  pMale <- nMale / nInfected * 100
-  pFemale <- nFemale / nInfected * 100
-  #Age distribution of patients
-  ageDist <- summary(data$age)
-  #return statement
-  returns <- list("Number of screens run:" = nscreens, "Percent infected" = percentInfected, "Percent of infected patients that are male" = pMale, "Percent of infected patients that are female" = pFemale, "Age distribution of all patients" = ageDist)
-  return(returns)
-}
