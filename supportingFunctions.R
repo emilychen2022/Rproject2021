@@ -117,6 +117,7 @@ summary <- function(file){   #"file" is the file name
   Location <- c("Total Screens", "Country X", "Country Y")
   Screens <- c(total_screens, countryX_screens, countryY_screens)
   Screens_df <- data.frame(Location, Screens)
+
 ##Plot 1 : Number of Screens
   plot_1 <- ggplot(data = Screens_df, aes(x=Location, y=Screens))+
     geom_col(aes(fill=Location))+
@@ -134,6 +135,15 @@ summary <- function(file){   #"file" is the file name
   cat("The percent infected: ", percent_infected, "%\n")
   percent_not_infected <- (1-(infected/total_screens))*100
   cat("The percent not infected: ", percent_not_infected, "%\n")
+##Plot 2: Infected
+#Infected <- percent_infected
+#Not_Infected <- percent_not_infected
+#Infected_df <- data.frame(Infected, Not_Infected)
+#plot_2 <- ggplot(data, aes(x = Infected, y = Not_Infected))+
+#geom_col(color = "black")+
+#coord_polar(theta = "y")+
+#ggtitle("Percent Infected v. Not Infected")+
+#theme(legend.position = "none")
 
   
 ##Male v. Female Patients
@@ -157,7 +167,7 @@ summary <- function(file){   #"file" is the file name
     xlab("Age Group") +
     ylab("Number of People")
   
-fig<-plot_grid(plot_1, plot_4, labels = c('A', 'B'))
+fig<-plot_grid(plot_1, plot_4, labels = c('A', 'D'))
 return(fig)
 }
 summary(allData.csv)
