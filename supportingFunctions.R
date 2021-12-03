@@ -98,12 +98,32 @@ read.csv("finalcombineddata.csv")
 library(ggplot2)
 library(cowplot)
 
-summary <- function(file){
+summary <- function(file){   #"file" is the file name
 #Load Data
   data <- read.csv("allData.csv", header=TRUE, sep= ",", stringsAsFactors=FALSE)
+
+##Number of Screens
 #Number of Screens Total = number of rows (i.e. number of people tested)
   total_screens <- nrow(data)
+  cat("The number of total screens run: ", total_screens, "\n")
+
+##Percentage of Infected Patients
+#Look at each row individually. If infected, individual will have one or more marker as a 1.
+  #Percent of patients screened that were infected and not infected
+  infected <- nrow(data[data$marker01==1 | 
+                          data$marker02==1 | 
+                          data$marker03==1 | 
+                          data$marker04==1 | 
+                          data$marker05==1 | 
+                          data$marker06==1 |
+                          data$marker07==1 | 
+                          data$marker08==1 | 
+                          data$marker09==1 |
+                          data$marker10==1, ])
+  percent_infected <- (infected/total_screens)*100
+  cat("The percent infected: ", percent_infected, "%\n")
+  percent_not_infected <- (1-(infected/total_screens))*100
+  cat("The percent not infected: ", percent_not_infected, "%\n")
 }
 summary(allData.csv)
-
 
