@@ -168,12 +168,6 @@ summary <- function(file){   #"file" is the file name
   Location <- c("Total Screens", "Country X", "Country Y")
   Screens <- c(total_screens, countryX_screens, countryY_screens)
   Screens_df <- data.frame(Location, Screens)
-
-##Plot 1 : Number of Screens
-  plot_1 <- ggplot(data = Screens_df, aes(x=Location, y=Screens))+
-    geom_col(aes(fill=Location))+
-    ggtitle("Number of Screens Run per Country")+
-    theme(legend.position = "none")
   
 ##Percentage of Infected Patients
 #Look at each row individually. If infected, individual will have one or more marker as a 1.
@@ -183,27 +177,21 @@ summary <- function(file){   #"file" is the file name
                           data$marker07==1 | data$marker08==1 | data$marker09==1 |
                           data$marker10==1, ])
   percent_infected <- (infected/total_screens)*100
+  percent_infected <- round(percent_infected, digits=2)
   cat("The percent infected: ", percent_infected, "%\n")
   percent_not_infected <- (1-(infected/total_screens))*100
+  percent_not_infected <- round(percent_not_infected, digits=2)
   cat("The percent not infected: ", percent_not_infected, "%\n")
-##Plot 2: Infected
-#Infected <- percent_infected
-#Not_Infected <- percent_not_infected
-#Infected_df <- data.frame(Infected, Not_Infected)
-#plot_2 <- ggplot(data, aes(x = Infected, y = Not_Infected))+
-#geom_col(color = "black")+
-#coord_polar(theta = "y")+
-#ggtitle("Percent Infected v. Not Infected")+
-#theme(legend.position = "none")
-
   
 ##Male v. Female Patients
   total_patients <- nrow(data)
   male <- nrow(data[data$gender == "male",])
   percent_male <- (male/total_patients)*100
+  percent_male <- round(percent_male, digits=2)
   cat("Percentage of male patients: ", percent_male, "%\n")
   female <- nrow(data[data$gender == "female",])
   percent_female <- (female/total_patients)*100
+  percent_female <- round(percent_female, digits=2)
   cat("Percentage of female patients: ", percent_female, "%\n")
   
 ##Age Distribution
@@ -211,6 +199,30 @@ summary <- function(file){   #"file" is the file name
   age_data$group <- cut(age_data$age, breaks = c(0,10,20,30,40,50,60,70,80,400),
                              labels = c("0+","10+","20+","30+","40+","50+","60+","70+","80+"),
                              right=T)
+
+  
+##Plot 1 : Number of Screens
+  plot_1 <- ggplot(data = Screens_df, aes(x=Location, y=Screens))+
+    geom_col(aes(fill=Location))+
+    ggtitle("Number of Screens Run per Country")+
+    theme(legend.position = "none")
+
+##Plot 2: Infected
+  slices <- c(percent_infected, percent_not_infected)
+  lbls <- c("Infected", "Not Infected")
+  pct <- round(slices)
+  lbls <- paste(lbls, pct) # add percents to labels
+  lbls <- paste(lbls,"%",sep="") # ads % to labels
+  pie(slices,labels = lbls, col=rainbow(length(lbls)), main="Infected v. Not Infected")
+
+##Plot 3: Gender
+  slices <- c(percent_male, percent_female)
+  lbls <- c("Male", "Female")
+  pct <- round(slices)
+  lbls <- paste(lbls, pct) # add percents to labels
+  lbls <- paste(lbls,"%",sep="") # ads % to labels
+  pie(slices,labels = lbls, col=rainbow(length(lbls)), main="Male v. Female Patients")
+  
 ##Plot 4: Age Distribution
   plot_4 <- ggplot(age_data, aes(x=group, fill = gender)) +
     geom_bar() +

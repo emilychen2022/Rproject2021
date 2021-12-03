@@ -16,7 +16,11 @@ return(fig_2)
 
 
 ###STEP (4) - Determine Marker Count
+library(ggplot2)
+library(cowplot)
+
 countryX_data <- data[data$country == "X", ]
+
 # Country Y data
 countryY_data <- data[data$country == "Y", ]
 
@@ -31,14 +35,18 @@ x_marker_graph <- ggplot(markers, aes(x = marker, y = totalX, fill = marker)) +
   geom_bar(stat = "identity") +
   ggtitle("Country X Marker Count") +
   theme(legend.position = "none")+
-  xlab("Marker") + ylab("Total")
+  geom_col(color = "black")+
+  xlab("Marker") + 
+  ylab("Total")
 
 # Plots Country Y's marker data
 y_marker_graph <- ggplot(markers, aes(x = marker, y = totalY, fill = marker)) + 
   geom_bar(stat = "identity") +
   ggtitle("Country Y Marker Count") +
   theme(legend.position = "none")+
-  xlab("Marker") + ylab("Total")
+  geom_col(color = "black")+
+  xlab("Marker") + 
+  ylab("Total")
 
 # print results
 fig<-plot_grid(x_marker_graph, y_marker_graph, labels = c('A', 'B'))
